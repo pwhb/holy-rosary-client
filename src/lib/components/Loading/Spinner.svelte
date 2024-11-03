@@ -1,0 +1,1 @@
+<span class="loading loading-ring w-[18rem] text-secondary"></span>

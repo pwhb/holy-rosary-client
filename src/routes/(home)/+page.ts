@@ -1,12 +1,11 @@
-import { PUBLIC_BACKEND_URL, PUBLIC_BASIC_TOKEN } from '$env/static/public';
-import { redirect } from '@sveltejs/kit';
+import { page } from '$app/stores';
 import type { PageLoad } from './$types';
-import { rosaryDataStore } from '$lib/stores/rosaries';
 
 export const ssr = false;
 
-export const load: PageLoad = async ({ fetch }) =>
+export const load: PageLoad = async ({ data }) =>
 {
+
 	// const res = {
 	// 	FRONTEND_CONFIG: {
 	// 		code: 'FRONTEND_CONFIG',
@@ -35,19 +34,6 @@ export const load: PageLoad = async ({ fetch }) =>
 	// 	}
 	// };
 
-	let initData;
-	let user;
-	let telegramUserInfo;
-	let token = localStorage.getItem('token');
-	let deviceId = localStorage.getItem('deviceId');
-	let client = 'web';
-
-	if (!deviceId)
-	{
-		deviceId = crypto.randomUUID();
-		localStorage.setItem('deviceId', deviceId);
-	}
-
 	// DEBUG
 	// client = res.client;
 	// telegramUserInfo = res.telegramUserInfo;
@@ -55,52 +41,7 @@ export const load: PageLoad = async ({ fetch }) =>
 	// initData = res.initData;
 	// DEBUG
 
-	if (window.Telegram.WebApp && window.Telegram.WebApp.initData)
-	{
-		client = 'telegram';
-		const query = new URLSearchParams(window.Telegram.WebApp.initData);
-		initData = Object.fromEntries(query);
-		telegramUserInfo = JSON.parse(initData.user);
-		user = {
-			username: telegramUserInfo.username
-		};
-		const authRes = await fetch(`${PUBLIC_BACKEND_URL}/api/v1/auth/thirdparty/login`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Basic ${PUBLIC_BASIC_TOKEN}`
-			},
-			body: JSON.stringify({
-				username: telegramUserInfo.username,
-				password: String(telegramUserInfo.id),
-				deviceId: deviceId
-			})
-		});
-		const authData = await authRes.json();
+	console.log("data", data);
 
-		if (authData.ok)
-		{
-			token = authData.data.access_token as string;
-			localStorage.setItem('token', token);
-		}
-	}
-
-	const rosaryRes = await fetch(`${PUBLIC_BACKEND_URL}/api/v1/rosaries/today`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`
-		}
-	});
-	const rosaryData = await rosaryRes.json();
-	rosaryDataStore.set(rosaryData.data);
-	return {
-		client: client,
-		telegramUserInfo: telegramUserInfo,
-		user: user,
-		token: token,
-		deviceId: deviceId,
-		initData: initData,
-		rosaryData: rosaryData.data
-	};
+	return {};
 };

@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	// import { page } from '$app/stores';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
+	import { appConfigsStore } from '$lib/stores/configs';
 	import { createNewPrayerStore, rosaryDataStore } from '$lib/stores/rosaries';
-		const lang = $page.data.lang;
-	const { LANG } = $page.data.FRONTEND_CONFIG.subConfigs;
+	import { tokenStore } from '$lib/stores/user';
+	import Spinner from '../Loading/Spinner.svelte';
+	const lang = $appConfigsStore.FRONTEND_CONFIG.value.defaultLanguage;
+	const { LANG } = $appConfigsStore.FRONTEND_CONFIG.subConfigs;
 	let isLoading = false;
 	let currentIdx = $rosaryDataStore.prayers.length - 1;
 	let lastDiff = 1;
@@ -18,7 +21,7 @@
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${$page.data.token}`
+				Authorization: `Bearer ${$tokenStore}`
 			},
 			body: JSON.stringify({
 				diff: diff,
@@ -36,7 +39,7 @@
 </script>
 
 {#if isLoading}
-	<span class="loading loading-ring w-[18rem]"></span>
+	<Spinner />
 {:else}
 	<!-- <div class="dropdown dropdown-end fixed right-6 top-6 md:right-24 md:top-12">
 		<div tabindex="0" role="button" class="avatar placeholder">

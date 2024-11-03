@@ -1,10 +1,11 @@
 <script>
-	import { page } from '$app/stores';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
+	import { appConfigsStore } from '$lib/stores/configs';
 	import { createNewPrayerStore, rosaryDataStore } from '$lib/stores/rosaries';
-	const lang = $page.data.lang;
-	const { LANG } = $page.data.FRONTEND_CONFIG.subConfigs;
-	const { PRAYER_TYPES, ROSARY_TYPES } = $page.data.ROSARY_CONFIG.value;
+	import { tokenStore } from '$lib/stores/user';
+	const lang = $appConfigsStore.FRONTEND_CONFIG.value.defaultLanguage;
+	const { LANG } = $appConfigsStore.FRONTEND_CONFIG.subConfigs;
+	const { PRAYER_TYPES, ROSARY_TYPES } = $appConfigsStore.ROSARY_CONFIG.value;
 
 	const createPrayer = {
 		rosaryId: $rosaryDataStore._id,
@@ -19,7 +20,7 @@
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${$page.data.token}`
+				Authorization: `Bearer ${$tokenStore}`
 			},
 			body: JSON.stringify(createPrayer)
 		});
