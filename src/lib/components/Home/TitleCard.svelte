@@ -9,7 +9,7 @@
 		<div class="flex flex-row justify-between">
 			<p class=" text-content font-semibold">{$page.data.user.username}</p>
 			<p class=" text-content">
-				{$loadingStore
+				{$loadingStore || !$rosaryDataStore.prayers || !$rosaryDataStore.prayers[$rosaryDataStore.prayers.length - 1].prayer_metadata
 					? ''
 					: $rosaryDataStore.prayers[$rosaryDataStore.prayers.length - 1].prayer_metadata.name[
 							$appConfigsStore.FRONTEND_CONFIG.value.defaultLanguage
