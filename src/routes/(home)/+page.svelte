@@ -4,7 +4,7 @@
 	import { createNewPrayerStore, rosaryDataStore } from '$lib/stores/rosaries';
 </script>
 
-{#if $rosaryDataStore.prayers.length === 0 || $createNewPrayerStore}
+{#if !$rosaryDataStore.prayers || !$rosaryDataStore.prayers.length || $createNewPrayerStore}
 	<ChoosePrayer />
 {:else}
 	<Rosary />
